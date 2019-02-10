@@ -29,6 +29,15 @@ public class ReminderCacheUtil {
 
     private ReminderRepository repository;
 
+    /**
+     * In this case a CacheBuilder is used to actual build the reminderCache.
+     * Now, when the CacheBuilder is used, it's mostly self explanatory Except for the two arguments I passed in.
+     * The argument passed in to the build command, is the name of the ReminderCacheLoader (defined as an inner
+     * class below) which has two arguments. The repository (the name of where the items are loaded from - presumably
+     * a rest endpoint or URL endpoint is acceptable, and the class that is being cached.
+     *
+     * @param repository the respository
+     */
     @Autowired
     public ReminderCacheUtil(final ReminderRepository repository) {
         this.repository = repository;
@@ -39,6 +48,12 @@ public class ReminderCacheUtil {
 
     }
 
+    /**
+     * The retrieveValue method simply refers to where the values are being called from.
+     *
+     * @param reminderName a reminderName
+     * @return a reminder
+     */
     public Reminder retrieveValue(String reminderName) {
         try {
             LOGGER.info(reminderCache.stats().toString());
@@ -50,7 +65,15 @@ public class ReminderCacheUtil {
         return null;
     }
 
-    public class ReminderCacheLoader<T> extends CacheLoader<String, T> {
+    /**
+     * The ReminderCacheLaoder class extends CacheLoader, and needs two things. The Key value, and the Value in this
+     * case a class of reminderClass.
+     *
+     * Note the String here is not the requested value from the above class.
+     *
+     * @param <T> in this case T is Reminder.class
+     */
+    public class ReminderCacheLoader<T> extends CacheLoader<String, T> /* Refering to the key and value */{
 
         private final Logger LOGGER = LoggerFactory.getLogger("ReminderCacheLoader.class");
 
@@ -62,6 +85,9 @@ public class ReminderCacheUtil {
             this.repository = repository;
         }
 
+        /*
+        This is where the String value being requested actually goes.
+         */
         @Override
         public T load(String s) throws Exception {
 
